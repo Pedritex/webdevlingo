@@ -78,6 +78,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resultCard = document.getElementById('result-card');
     const placeholderState = document.getElementById('placeholder-state');
 
+    // Display Elements
+    const termDisplay = document.getElementById('term-display');
+    const translationDisplay = document.getElementById('translation-display');
+    const definitionDisplay = document.getElementById('definition-display');
+    const contextDisplay = document.getElementById('context-display');
+
     // Auth Elements
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
@@ -206,6 +212,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Contact Form Handling
+    const messages = document.getElementById('contact-form');
     if (messages) {
         messages.addEventListener('submit', (e) => {
             e.preventDefault();
