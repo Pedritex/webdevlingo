@@ -134,30 +134,8 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const supabaseUrl = 'https://dtggsvgpmktfidjyoszu.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0Z2dzdmdwbWt0Zmlkanlvc3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1OTQxMjAsImV4cCI6MjA4MzE3MDEyMH0.8J7HDdZ8CwFpaGjikZzCIG-pkybXY3WXFzrTa2rYDPk';
-
-        // Crear la conexión
-        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-        console.log("Supabase listo en WebDevLingo 🚀");
-    </script>// 1. Localizamos el botón en tu HTML
-    const loginBtn = document.getElementById('login-btn');
-
-    // 2. Le añadimos un "oído" para que escuche cuando le hacen clic
-    loginBtn.addEventListener('click', async () => {
-    console.log("Iniciando sesión con Google...");
-
-    // 3. Pedimos a Supabase que nos lleve a Google
-    const { data, error } = await _supabase.auth.signInWithOAuth({
-    provider: 'google',
-    });
-
-    if (error) console.error("Error:", error);
-    });
+    <script src="script.js"></script>
 </body>
 
 </html>
