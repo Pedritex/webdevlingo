@@ -231,3 +231,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 });
+// 1. Configuración de Supabase
+const supabaseUrl = 'https://dtggsvgpmktfidjyoszu.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0Z2dzdmdwbWt0Zmlkanlvc3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1OTQxMjAsImV4cCI6MjA4MzE3MDEyMH0.8J7HDdZ8CwFpaGjikZzCIG-pkybXY3WXFzrTa2rYDPk';
+
+// 2. Iniciar el cliente
+const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+console.log("Supabase listo para la acción! 🚀", _supabase);

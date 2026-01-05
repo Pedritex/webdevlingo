@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Conexión Supabase</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        .status { margin-top: 20px; font-weight: bold; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+
+    <h1>🚑 Diagnóstico de Conexión</h1>
+    <p>Intentando conectar con Supabase...</p>
+    <div id="resultado" class="status">Esperando...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // Tus credenciales (las he puesto aquí por ti)
+        const supabaseUrl = 'https://dtggsvgpmktfidjyoszu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0Z2dzdmdwbWt0Zmlkanlvc3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1OTQxMjAsImV4cCI6MjA4MzE3MDEyMH0.8J7HDdZ8CwFpaGjikZzCIG-pkybXY3WXFzrTa2rYDPk';
+
+        try {
+            // Intentamos iniciar el cliente
+            const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+            
+            // Si llega aquí sin error, ¡es buena señal!
+            console.log("Cliente creado:", _supabase);
+            
+            document.getElementById('resultado').innerText = "✅ ¡CONEXIÓN EXITOSA! Supabase está listo.";
+            document.getElementById('resultado').className = "status success";
+            
+            alert("¡Funciona! La librería se cargó bien.");
+
+        } catch (error) {
+            console.error("Error detectado:", error);
+            document.getElementById('resultado').innerText = "❌ ERROR: " + error.message;
+            document.getElementById('resultado').className = "status error";
+        }
+    </script>
+</body>
+</html>
