@@ -186,32 +186,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Hide suggestions when clicking outside
     document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        if (searchInput && suggestionsBox && !searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
             suggestionsBox.style.display = 'none';
         }
     });
-
-    function displayTerm(item) {
-        guardarEnHistorial(item.term);
-        // Hide placeholder, show result
-        placeholderState.classList.add('hidden');
-        resultCard.classList.remove('hidden');
-
-        // Animate content change
-        resultCard.style.opacity = '0';
-        setTimeout(() => {
-            termDisplay.textContent = item.term;
-            translationDisplay.textContent = item.translation;
-            definitionDisplay.textContent = item.definition;
-            contextDisplay.textContent = item.context;
-            resultCard.style.opacity = '1';
-        }, 200);
-    }
-
-    function resetDisplay() {
-        placeholderState.classList.remove('hidden');
-        resultCard.classList.add('hidden');
-    }
 
     // Contact Form Handling
     const messages = document.getElementById('contact-form');
@@ -233,23 +211,54 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 });
-// 1. Configuración de Supabase
-const supabaseUrl = 'https://dtggsvgpmktfidjyoszu.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0Z2dzdmdwbWt0Zmlkanlvc3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1OTQxMjAsImV4cCI6MjA4MzE3MDEyMH0.8J7HDdZ8CwFpaGjikZzCIG-pkybXY3WXFzrTa2rYDPk';
 
-// 2. Iniciar el cliente
-const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// --- FUNCIONES GLOBALES ---
 
-console.log("Supabase listo para la acción! 🚀", _supabase);
+function displayTerm(item) {
+    if (!item) return;
+
+    // Elementos del DOM (los buscamos en el momento o los hacemos globales)
+    const resultCard = document.getElementById('result-card');
+    const placeholderState = document.getElementById('placeholder-state');
+    const termDisplay = document.getElementById('term-display');
+    const translationDisplay = document.getElementById('translation-display');
+    const definitionDisplay = document.getElementById('definition-display');
+    const contextDisplay = document.getElementById('context-display');
+
+    if (!resultCard || !placeholderState) return;
+
+    // Guardar en el historial (solo si hay Supabase y usuario)
+    guardarEnHistorial(item.term);
+
+    // Mostrar resultado
+    placeholderState.classList.add('hidden');
+    resultCard.classList.remove('hidden');
+
+    // Animación suave
+    resultCard.style.opacity = '0';
+    setTimeout(() => {
+        termDisplay.textContent = item.term;
+        translationDisplay.textContent = item.translation;
+        definitionDisplay.textContent = item.definition;
+        contextDisplay.textContent = item.context;
+        resultCard.style.opacity = '1';
+    }, 200);
+}
+
+function resetDisplay() {
+    const resultCard = document.getElementById('result-card');
+    const placeholderState = document.getElementById('placeholder-state');
+    if (resultCard && placeholderState) {
+        placeholderState.classList.remove('hidden');
+        resultCard.classList.add('hidden');
+    }
+}
 // Función para guardar en el historial automáticamente
 async function guardarEnHistorial(palabra) {
-    // Verificamos si Supabase está listo
     if (!supabaseClient) return;
 
-    // 1. Obtenemos el usuario actual
     const { data: { user } } = await supabaseClient.auth.getUser();
 
-    // 2. Si hay usuario, guardamos
     if (user) {
         const { error } = await supabaseClient
             .from('history')
@@ -258,57 +267,63 @@ async function guardarEnHistorial(palabra) {
                 user_id: user.id
             });
 
-        if (error) console.error('Error al guardar historial:', error);
-        else console.log(`✅ Guardado en historial: ${palabra}`);
-    }// Función para cargar y mostrar el historial
-    async function cargarHistorial() {
-        const historyList = document.getElementById('history-list');
-        const historySection = document.getElementById('history-section');
+        if (error) {
+            console.error('Error al guardar historial:', error);
+        } else {
+            console.log(`✅ Guardado en historial: ${palabra}`);
+            cargarHistorial(); // Refrescar la lista inmediatamente
+        }
+    }
+}
+// Función para cargar y mostrar el historial
+async function cargarHistorial() {
+    const historyList = document.getElementById('history-list');
+    const historySection = document.getElementById('history-section');
 
-        // Si no hay conexión o no existe la lista, paramos
-        if (!supabaseClient || !historyList) return;
+    // Si no hay conexión o no existe la lista, paramos
+    if (!supabaseClient || !historyList) return;
 
-        const { data: { user } } = await supabaseClient.auth.getUser();
+    const { data: { user } } = await supabaseClient.auth.getUser();
 
-        if (user) {
-            // 1. Mostrar la sección del historial
-            historySection.classList.remove('hidden');
+    if (user) {
+        // 1. Mostrar la sección del historial
+        historySection.classList.remove('hidden');
 
-            // 2. Pedir datos a Supabase (los más recientes primero)
-            const { data, error } = await supabaseClient
-                .from('history')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false });
+        // 2. Pedir datos a Supabase (los más recientes primero)
+        const { data, error } = await supabaseClient
+            .from('history')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
 
-            if (data) {
-                historyList.innerHTML = ''; // Limpiamos la lista para no duplicar
+        if (data) {
+            historyList.innerHTML = ''; // Limpiamos la lista para no duplicar
 
-                data.forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = 'history-item';
-                    // Si tienes fecha la usamos, si no, ponemos solo la palabra
-                    const fecha = item.created_at ? new Date(item.created_at).toLocaleDateString() : '';
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                // Si tienes fecha la usamos, si no, ponemos solo la palabra
+                const fecha = item.created_at ? new Date(item.created_at).toLocaleDateString() : '';
 
-                    li.innerHTML = `
+                li.innerHTML = `
                         <span style="font-weight: bold; font-size: 1.1em;">${item.word}</span>
                         <span class="history-date">${fecha}</span>
                     `;
 
-                    // Al hacer clic, buscamos la palabra de nuevo
-                    li.addEventListener('click', () => {
-                        const foundNode = dictionary.find(t => t.term.toLowerCase() === item.word.toLowerCase());
-                        if (foundNode) {
-                            displayTerm(foundNode);
-                            document.getElementById('translator').scrollIntoView({ behavior: 'smooth' });
-                        }
-                    });
-
-                    historyList.appendChild(li);
+                // Al hacer clic, buscamos la palabra de nuevo
+                li.addEventListener('click', () => {
+                    const foundNode = dictionary.find(t => t.term.toLowerCase() === item.word.toLowerCase());
+                    if (foundNode) {
+                        displayTerm(foundNode);
+                        document.getElementById('translator').scrollIntoView({ behavior: 'smooth' });
+                    }
                 });
-            }
-        } else {
-            // Si no hay usuario, ocultamos la sección
-            historySection.classList.add('hidden');
+
+                historyList.appendChild(li);
+            });
         }
+    } else {
+        // Si no hay usuario, ocultamos la sección
+        historySection.classList.add('hidden');
     }
+}
