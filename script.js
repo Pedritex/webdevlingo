@@ -1,7 +1,7 @@
 // CONFIGURACIÓN DE SUPABASE
 // REEMPLAZA ESTOS VALORES CON LOS DE TU PROYECTO DE SUPABASE
 const SUPABASE_URL = 'https://dtggsvgpmktfidjyoszu.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_K3HMoWMqAl0Y9Q6BFals2Q_b9AesPfp';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0Z2dzdmdwbWt0Zmlkanlvc3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1OTQxMjAsImV4cCI6MjA4MzE3MDEyMH0.8J7HDdZ8CwFpaGjikZzCIG-pkybXY3WXFzrTa2rYDPk';
 
 let supabase;
 let dbTerms = [];
