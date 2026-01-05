@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             loginBtn.classList.add('hidden');
             userInfo.classList.remove('hidden');
             userEmailSpan.textContent = session.user.email;
+            cargarHistorial();
         } else {
             loginBtn.classList.remove('hidden');
             userInfo.classList.add('hidden');
@@ -191,6 +192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     function displayTerm(item) {
+        guardarEnHistorial(item.term);
         // Hide placeholder, show result
         placeholderState.classList.add('hidden');
         resultCard.classList.remove('hidden');
@@ -239,3 +241,64 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 console.log("Supabase listo para la acción! 🚀", _supabase);
+// Función para guardar en el historial automáticamente
+async function guardarEnHistorial(palabra) {
+    // Verificamos si Supabase está listo
+    if (!supabaseClient) return;
+
+    // 1. Obtenemos el usuario actual
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    // 2. Si hay usuario, guardamos
+    if (user) {
+        const { error } = await supabaseClient
+            .from('history')
+            .insert({
+                word: palabra,
+                user_id: user.id
+            });
+
+        if (error) console.error('Error al guardar historial:', error);
+        else console.log(`✅ Guardado en historial: ${palabra}`);
+    }// Función para cargar y mostrar el historial
+    async function cargarHistorial() {
+        const historyList = document.getElementById('history-list');
+        const historySection = document.getElementById('history-section');
+
+        // Si no hay conexión o no existe la lista, paramos
+        if (!supabaseClient || !historyList) return;
+
+        const { data: { user } } = await supabaseClient.auth.getUser();
+
+        if (user) {
+            // 1. Mostrar la sección del historial
+            historySection.classList.remove('hidden');
+
+            // 2. Pedir datos a Supabase (los más recientes primero)
+            const { data, error } = await supabaseClient
+                .from('history')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (data) {
+                historyList.innerHTML = ''; // Limpiamos la lista para no duplicar
+
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'history-item';
+                    // Si tienes fecha la usamos, si no, ponemos solo la palabra
+                    const fecha = item.created_at ? new Date(item.created_at).toLocaleDateString() : '';
+
+                    li.innerHTML = `
+                    <span style="font-weight: bold; font-size: 1.1em;">${item.word}</span>
+                    <span class="history-date">${fecha}</span>
+                `;
+                    historyList.appendChild(li);
+                });
+            }
+        } else {
+            // Si no hay usuario, ocultamos la sección
+            historySection.classList.add('hidden');
+        }
+    }
