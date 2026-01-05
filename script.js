@@ -4,7 +4,7 @@ const SUPABASE_URL = 'https://dtggsvgpmktfidjyoszu.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0Z2dzdmdwbWt0Zmlkanlvc3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1OTQxMjAsImV4cCI6MjA4MzE3MDEyMH0.8J7HDdZ8CwFpaGjikZzCIG-pkybXY3WXFzrTa2rYDPk';
 
 let supabaseClient;
-let dbTerms = [];
+let dictionary = [];
 
 // Inicializar Supabase si las credenciales son válidas
 try {
@@ -71,7 +71,7 @@ async function loadTerms() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Cargar datos
-    const termDictionary = await loadTerms();
+    dictionary = await loadTerms();
 
     const searchInput = document.getElementById('term-input');
     const suggestionsBox = document.getElementById('suggestions');
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Populate Vocabulary Grid
     const vocabGrid = document.getElementById('vocab-grid');
     if (vocabGrid) {
-        termDictionary.forEach(item => {
+        dictionary.forEach(item => {
             const card = document.createElement('div');
             card.className = 'vocab-card';
             card.innerHTML = `
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         suggestionsBox.innerHTML = '';
 
         if (value.length > 0) {
-            const filteredTerms = termDictionary.filter(item =>
+            const filteredTerms = dictionary.filter(item =>
                 item.term.toLowerCase().includes(value)
             );
 
@@ -291,9 +291,19 @@ async function guardarEnHistorial(palabra) {
                     const fecha = item.created_at ? new Date(item.created_at).toLocaleDateString() : '';
 
                     li.innerHTML = `
-                    <span style="font-weight: bold; font-size: 1.1em;">${item.word}</span>
-                    <span class="history-date">${fecha}</span>
-                `;
+                        <span style="font-weight: bold; font-size: 1.1em;">${item.word}</span>
+                        <span class="history-date">${fecha}</span>
+                    `;
+
+                    // Al hacer clic, buscamos la palabra de nuevo
+                    li.addEventListener('click', () => {
+                        const foundNode = dictionary.find(t => t.term.toLowerCase() === item.word.toLowerCase());
+                        if (foundNode) {
+                            displayTerm(foundNode);
+                            document.getElementById('translator').scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+
                     historyList.appendChild(li);
                 });
             }
