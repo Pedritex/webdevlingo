@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Traductor e intérprete de vocabulario técnico para desarrollo web.">
+    <title>WebDevLingo - Tu diccionario de desarrollo web</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="https://fav.farm/🌐" />
+    <!-- Supabase JS Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-text">WebDev</span><span class="logo-highlight">Lingo</span><span
+                class="domain-tld">.tech</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#translator">Traductor</a></li>
+            <li><a href="#vocabulary">Glosario</a></li>
+            <li><a href="#contact">Contacto</a></li>
+            <li id="auth-section">
+                <button id="login-btn" class="nav-btn">Google Login</button>
+                <div id="user-info" class="hidden">
+                    <span id="user-email"></span>
+                    <button id="logout-btn" class="nav-btn-outline">Salir</button>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Domina el lenguaje de la <span class="gradient-text">Web</span></h1>
+            <p>Interpreta y traduce vocabulario técnico de creación de sitios web del inglés al español.</p>
+            <a href="#translator" class="cta-button">Empezar a traducir</a>
+        </div>
+        <div class="hero-visual">
+            <div class="glass-card float">
+                <code>&lt;Hello World /&gt;</code>
+            </div>
+            <div class="glass-card float-delay">
+                <code>.style { beauty: true; }</code>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="translator" class="translator-section">
+            <div class="container">
+                <h2>Traductor de Términos</h2>
+                <div class="translator-interface">
+                    <div class="input-group">
+                        <label for="term-input">Término en Inglés</label>
+                        <input type="text" id="term-input" placeholder="Ej: Framework, API, Deploy...">
+                        <div id="suggestions" class="suggestions-box"></div>
+                    </div>
+                    <div class="output-group">
+                        <div class="result-card hidden" id="result-card">
+                            <h3 id="term-display"></h3>
+                            <div class="translation-tag">Traducción: <span id="translation-display"></span></div>
+                            <p id="definition-display" class="definition"></p>
+                            <div class="context-box">
+                                <strong>Contexto de uso:</strong>
+                                <p id="context-display"></p>
+                            </div>
+                        </div>
+                        <div class="placeholder-state" id="placeholder-state">
+                            <p>Ingresa un término para ver su significado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="vocabulary" class="vocabulary-grid-section">
+            <div class="container">
+                <h2>Vocabulario Esencial</h2>
+                <div class="vocabulary-grid" id="vocab-grid">
+                    <!-- Dictionary items will be populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2>Contáctanos</h2>
+                <div class="contact-wrapper">
+                    <form class="contact-form" id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Nombre</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Mensaje</label>
+                            <textarea id="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Enviar Mensaje</button>
+                    </form>
+                    <div class="contact-info">
+                        <h3>Información</h3>
+                        <p>¿Tienes dudas sobre algún término? ¿Quieres sugerir una nueva palabra?</p>
+                        <p>Escríbenos y te ayudaremos a entender mejor el mundo del desarrollo web.</p>
+                        <div class="fake-domain-badge">
+                            Dominio oficial: <strong>webdevlingo.tech</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 WebDevLingo. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
