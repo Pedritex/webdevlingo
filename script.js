@@ -3,13 +3,13 @@
 const SUPABASE_URL = 'https://dtggsvgpmktfidjyoszu.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0Z2dzdmdwbWt0Zmlkanlvc3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1OTQxMjAsImV4cCI6MjA4MzE3MDEyMH0.8J7HDdZ8CwFpaGjikZzCIG-pkybXY3WXFzrTa2rYDPk';
 
-let supabase;
+let supabaseClient;
 let dbTerms = [];
 
 // Inicializar Supabase si las credenciales son válidas
 try {
     if (SUPABASE_URL !== 'https://tu-proyecto.supabase.co' && window.supabase) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 } catch (error) {
     console.error("Error inicializando Supabase:", error);
@@ -57,8 +57,8 @@ const localDictionary = [
 ];
 
 async function loadTerms() {
-    if (supabase) {
-        const { data, error } = await supabase.from('vocabulary').select('*');
+    if (supabaseClient) {
+        const { data, error } = await supabaseClient.from('vocabulary').select('*');
         if (!error && data && data.length > 0) {
             console.log("Cargando términos desde Supabase");
             return data;
@@ -91,25 +91,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userEmailSpan = document.getElementById('user-email');
 
     // Setup Auth UI
-    if (supabase) {
+    if (supabaseClient) {
         // Chequear sesión actual
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session } } = await supabaseClient.auth.getSession();
         updateAuthUI(session);
 
         // Listen for auth changes
-        supabase.auth.onAuthStateChange((_event, session) => {
+        supabaseClient.auth.onAuthStateChange((_event, session) => {
             updateAuthUI(session);
         });
 
         loginBtn.addEventListener('click', async () => {
-            const { error } = await supabase.auth.signInWithOAuth({
+            const { error } = await supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
             });
             if (error) console.error("Login error:", error.message);
         });
 
         logoutBtn.addEventListener('click', async () => {
-            const { error } = await supabase.auth.signOut();
+            const { error } = await supabaseClient.auth.signOut();
             if (error) console.error("Logout error:", error.message);
         });
     } else {
